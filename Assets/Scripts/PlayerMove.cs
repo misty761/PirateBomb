@@ -7,9 +7,9 @@ public class PlayerMove : MonoBehaviour
     // speed
     public float speed = 1f;
     // looking direction
-    bool isLookingRight;
+    public bool isLookingRight;
     // idle
-    bool isIdle;
+    public bool isIdle;
     // 애니메이터
     Animator animator;
     // 리지드 바디
