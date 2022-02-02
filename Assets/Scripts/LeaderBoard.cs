@@ -9,7 +9,7 @@ using UnityEngine.SocialPlatforms;
 
 public class LeaderBoard : MonoBehaviour
 {
-    string LEADER_BOARD_ID = "CgkI5M2Cxf8PEAIQAQ";
+    string LEADER_BOARD_ID = "";
 
     // Start is called before the first frame update
     void Start()
