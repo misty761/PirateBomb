@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 15465770619099037}
   - component: {fileID: 15465770619099038}
   - component: {fileID: 15465770619099036}
+  - component: {fileID: 1566175048}
+  - component: {fileID: 1537344464450737798}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -74,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 227932925
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: 1bc21307ad4f9b74bae0f94f4f04ffc9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -133,7 +135,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 2
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
@@ -155,7 +157,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1
-  forceJump: 150
+  isLookingRight: 0
+  isIdle: 0
+  animator: {fileID: 0}
+  mRigidbody: {fileID: 0}
+  forceJump: 400
+  isGround: 0
   pfParticlesRun: {fileID: 3336868156527315726, guid: a54f1c8cc2f3f604d899c0a73023c00c, type: 3}
   delayParticles: 0.7
   offsetParticlesRunX: 0.1
@@ -164,3 +171,41 @@ MonoBehaviour:
   offsetParticlesJumpY: -0.15
   pfParticlesFall: {fileID: 585199846013545015, guid: 2e7f3ad90e6b92c4388bfc4edad0965d, type: 3}
   offsetParticlesFallY: -0.23
+  life: 0
+  lifeMax: 3
+  power: 0.2
+  audioDamaged: {fileID: 8300000, guid: a5d77498a6516504f8817dcbb75d4884, type: 3}
+  audioDie: {fileID: 8300000, guid: dfc530109299ec04e85e1bb9bf94ce11, type: 3}
+  isJoystickdown: 0
+  isJoystickUp: 0
+--- !u!114 &1566175048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 15465770619099010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09257cf38ed874d4fb20cdf0644ccd0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offsetBombX: 0.3
+  offsetBombY: 0.3
+  pfBomb: {fileID: 1961104423746621639, guid: 4b778ab490276684f9fd4897eb1e7fa0, type: 3}
+  delayThrow: 1
+  forceThrowX: 300
+  forceThrowY: 100
+  audioThorw: {fileID: 8300000, guid: 7a768650dd8473343b53bb6151d77697, type: 3}
+--- !u!114 &1537344464450737798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 15465770619099010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7b53dc07a4588a4bb8d64e3026fb28e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

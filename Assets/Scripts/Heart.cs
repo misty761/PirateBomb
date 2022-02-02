@@ -5,11 +5,12 @@ using UnityEngine;
 public class Heart : MonoBehaviour
 {
     public GameObject pfEffect;
+    public PlayerMove player;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = FindObjectOfType<PlayerMove>();
     }
 
     // Update is called once per frame
@@ -23,6 +24,7 @@ public class Heart : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             // player life ++
+            player.AddLife();
 
             // effect
             Instantiate(pfEffect, transform.position, Quaternion.Euler(Vector2.zero));

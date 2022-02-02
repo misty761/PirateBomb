@@ -10,15 +10,15 @@ public class PlayerMove : MonoBehaviour
     public bool isLookingRight;
     // idle
     public bool isIdle;
-    // 애니메이터
-    Animator animator;
-    // 리지드 바디
-    Rigidbody2D mRigidbody;
-    // 점프력
-    public float forceJump = 100f;
-    // 땅에 있는지 여부
-    bool isGround;
-    // 떨어지는 여부
+    // anomator
+    public Animator animator;
+    // rigidbody
+    public Rigidbody2D mRigidbody;
+    // jump
+    public int forceJump = 150;
+    // ground
+    public bool isGround;
+    // falling
     bool isFalling;
     // particles
     public GameObject pfParticlesRun;
@@ -30,24 +30,56 @@ public class PlayerMove : MonoBehaviour
     public float offsetParticlesJumpY = -0.1f;
     public GameObject pfParticlesFall;
     public float offsetParticlesFallY = -0.15f;
+    // life
+    public int life;
+    public int lifeMax = 3;
+    PlayerLife playerLife;
+    // attack
+    public float power = 0.5f;
+    // sound
+    public AudioClip audioDamaged;
+    public AudioClip audioDie;
+    // joystick
+    float h;
+    float v;
+    public bool isJoystickdown;
+    public bool isJoystickUp;
+    Joystick joystick;
 
+    //button
+    ButtonJump buttonJump;
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        joystick = FindObjectOfType<Joystick>();
+        mRigidbody = GetComponent<Rigidbody2D>();
+        buttonJump = FindObjectOfType<ButtonJump>();
+        playerLife = FindObjectOfType<PlayerLife>();
+        Init();
+    }
+
+    public void Init()
+    {
+        life = lifeMax;
+        playerLife.UpdatePlayerLife();
         isLookingRight = true;
         isIdle = true;
-        animator = GetComponent<Animator>();
-        mRigidbody = GetComponent<Rigidbody2D>();
         isGround = false;
         isFalling = true;
         timeParticles = 0f;
+        isJoystickdown = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // 바라 보는 방향에 따라 스프라이트 회전
+        // sprite(change sprite depanding on looking direction)
         if (isLookingRight)
         {
             transform.localScale = new Vector2(1, 1);
@@ -57,7 +89,7 @@ public class PlayerMove : MonoBehaviour
             transform.localScale = new Vector2(-1, 1);
         }
 
-        // falling 판단
+        // falling
         if (!isGround)
         {
             if (mRigidbody.velocity.y > 0)
@@ -74,88 +106,165 @@ public class PlayerMove : MonoBehaviour
             isFalling = false;
         }
 
-        // jump
-        if (isGround)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                // particles
-                timeParticles = 0f;
-                makeParticles(pfParticlesJump, 0f, offsetParticlesJumpY);
+        // animator
+        animator.SetBool("Idle", isIdle);
+        animator.SetBool("Ground", isGround);
+        animator.SetBool("Fall", isFalling);
 
-                mRigidbody.AddForce(new Vector2(0, forceJump));
-                isGround = false;
-            }
+        // return
+        //print(life);
+        //print(animator.GetCurrentAnimatorStateInfo(0).IsName("DoorOut"));
+        //print(animator.GetCurrentAnimatorStateInfo(0).IsName("DoorIn"));
+        //print(GameManager.instance.state);
+        if (life <= 0) return;
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("DoorOut")) return;
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("DoorIn")) return;
+        if (GameManager.instance.state != GameManager.State.Play) return;
+
+        // joystick
+        if (joystick == null)
+        {
+            joystick = FindObjectOfType<Joystick>();
         }
         else
         {
-            // 점프키를 빨리 릴리즈하면 점프를 조금만 하도록 함
-            if (Input.GetKeyUp(KeyCode.Space) && mRigidbody.velocity.y > 0f)
+            float factorJoystick = 2f;
+            h = joystick.Horizontal * factorJoystick;
+            v = joystick.Vertical * factorJoystick;
+            if (h > speed) h = speed;
+            else if (h < -speed) h = -speed;
+            if (v > speed) v = speed;
+            else if (v < -speed) v = -speed;
+            //print("joystick h : " + h);
+            //print("joystick v : " + v);
+            if (v < -0.99f) isJoystickdown = true;
+            else isJoystickdown = false;
+            if (v > 0.99f) isJoystickUp = true;
+            else isJoystickUp = false;
+        }
+
+        // jump
+        if (buttonJump == null)
+        {
+            buttonJump = FindObjectOfType<ButtonJump>();
+        }
+        else
+        {
+            if (isGround)
             {
-                mRigidbody.velocity = new Vector2(mRigidbody.velocity.x, 0);
+                if (Input.GetKeyDown(KeyCode.Space) || buttonJump.isTouchDown)
+                {
+                    // button jump
+                    buttonJump.isTouchDown = false;
+
+                    // sound
+                    SoundManager.instance.PlaySound(SoundManager.instance.audioJump, transform.position, 1f);
+
+                    // particles
+                    timeParticles = 0f;
+                    MakeParticles(pfParticlesJump, 0f, offsetParticlesJumpY);
+
+                    // jump
+                    mRigidbody.AddForce(new Vector2(0, forceJump));
+                    isGround = false;
+                }
+            }
+            else
+            {
+                // jump(점프키를 빨리 릴리즈하면 점프를 조금만 하도록 함)
+                if (Input.GetKeyUp(KeyCode.Space) || buttonJump.isTouchUp)
+                {
+                    // button jump
+                    buttonJump.isTouchUp = false;
+
+                    // player is jumping up
+                    if (mRigidbody.velocity.y > 0f)
+                    {
+                        // fall
+                        mRigidbody.velocity = new Vector2(mRigidbody.velocity.x, 0);
+                    }
+
+                }
+
             }
         }
 
-        // A & D 동시 입력시
+        // input(A & D 동시 입력시)
         if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
         {
             isIdle = true;
         }
         // move left
-        else if (Input.GetKey(KeyCode.A))
+        else if (Input.GetKey(KeyCode.A) || h < -0.2f)
         {
-            // move
-            transform.Translate(Vector2.left * Time.deltaTime * speed);
+            // keyboard
+            if (Input.GetKey(KeyCode.A))
+            {
+                // move
+                transform.Translate(Vector2.left * Time.deltaTime * speed);
+            }
+            // joystick
+            else
+            {
+                // move
+                transform.Translate(Vector2.right * Time.deltaTime * speed * h);
+            }
+
             isLookingRight = false;
             isIdle = false;
 
             // particle
-            makeParticles(pfParticlesRun, offsetParticlesRunX, offsetParticlesRunY);
+            MakeParticles(pfParticlesRun, offsetParticlesRunX, offsetParticlesRunY);
 
         }
         // move right
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D) || h > 0.2f)
         {
-            // move
-            transform.Translate(Vector2.right * Time.deltaTime * speed);
+            // keyboard
+            if (Input.GetKey(KeyCode.D))
+            {
+                // move
+                transform.Translate(Vector2.right * Time.deltaTime * speed);
+            }
+            // joystick
+            else
+            {
+                // move
+                transform.Translate(Vector2.right * Time.deltaTime * speed * h);
+            }
+
             isLookingRight = true;
             isIdle = false;
 
             // particle
-            makeParticles(pfParticlesRun, -offsetParticlesRunX, offsetParticlesRunY);
+            MakeParticles(pfParticlesRun, -offsetParticlesRunX, offsetParticlesRunY);
         }
         else
         {
             isIdle = true;
-        }
-
-        // 애니메이션
-        animator.SetBool("Idle", isIdle);
-        animator.SetBool("Ground", isGround);
-        animator.SetBool("Fall", isFalling);
+        }    
     }
 
-    void makeParticles(GameObject particles, float offsetX, float offsetY)
+    void MakeParticles(GameObject particles, float offsetX, float offsetY)
     {
         Vector2 pos = new Vector2(transform.transform.position.x + offsetX, transform.position.y + offsetY);
 
-        // 캐릭터 방향에따라 스프라이트 회전
+        // sprite(캐릭터 방향에따라 스프라이트 회전)
         if (isLookingRight)
         {
-            particles.transform.localScale = new Vector2(1, 1);    
+            particles.transform.localScale = new Vector2(1, 1);
         }
         else
         {
             particles.transform.localScale = new Vector2(-1, 1);
         }
-        
-        // 파티클 생성
+
+        // particles
         if (timeParticles == 0f && isGround)
         {
             Instantiate(particles, pos, Quaternion.Euler(Vector2.zero));
         }
-
-        // 파티클 딜레이
+        // paticles delay time
         if (timeParticles < delayParticles)
         {
             timeParticles += Time.deltaTime;
@@ -167,16 +276,117 @@ public class PlayerMove : MonoBehaviour
 
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void GetDamage(float _damage)
     {
-        // 땅에 착지
-        if (collision.contacts[0].point.normalized.y < 0)
+        // damage
+        int damage;
+        if (_damage < 0.5f)
         {
-            isGround = true;
+            damage = 1;
+        }
+        else
+        {
+            damage = 2;
+        }
 
-            // 파티클
-            timeParticles = 0f;
-            makeParticles(pfParticlesFall, 0f, offsetParticlesFallY);
+        // life --
+        GetDamage(damage);
+    }
+
+    public void GetDamage(int damage)
+    {
+        if (GameManager.instance.state == GameManager.State.GameOver) return;
+
+        // life --
+        life -= damage;
+        if (life < 0) life =  0;
+        playerLife.UpdatePlayerLife();
+        // animator
+        animator.SetInteger("Life", life);
+        animator.SetTrigger("Damaged");
+
+        if (life > 0)
+        {
+            // sound
+            SoundManager.instance.PlaySound(audioDamaged, transform.position, 1f); 
+        }
+        // die
+        else
+        {
+            // sound
+            SoundManager.instance.PlaySound(audioDie, transform.position, 1f);
+
+            // game over
+            GameManager.instance.GameOver();
         }
     }
+
+    public void AddLife()
+    {
+        if (life > 0)
+        {
+            if (life >= lifeMax)
+            {
+                life = lifeMax;
+                GameManager.instance.Scored(10);
+            }
+            else
+            {
+                // sound
+                SoundManager.instance.PlaySound(SoundManager.instance.audioLifeUp, transform.position, 0.05f);
+
+                life++;
+            }
+            
+            // life bar
+            playerLife.UpdatePlayerLife();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer != LayerMask.NameToLayer("Wall"))
+        {
+            // player가 위에서 충돌
+            if (collision.contacts[0].point.normalized.y < 0f)
+            {
+                // sound
+                SoundManager.instance.PlaySound(SoundManager.instance.audioThud, transform.position, SoundManager.instance.volumeThud);
+
+                isGround = true;
+
+                // particles
+                timeParticles = 0f;
+                MakeParticles(pfParticlesFall, 0f, offsetParticlesFallY);
+            }
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer != LayerMask.NameToLayer("Wall"))
+        {
+            isGround = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            isGround = false;
+        }
+    }
+    public void DoorOut()
+    {
+        animator.SetTrigger("DoorOut");
+    }
+
+    public void DoorIn()
+    {
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("DoorIn"))
+        animator.SetTrigger("DoorIn");
+    }
+
+
 }

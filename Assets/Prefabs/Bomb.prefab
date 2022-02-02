@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 1961104423746621638}
   - component: {fileID: 1961104423746621634}
   - component: {fileID: 1961104423746621635}
+  - component: {fileID: 4623980486760641863}
+  - component: {fileID: 224860550}
   m_Layer: 8
   m_Name: Bomb
   m_TagString: Untagged
@@ -71,9 +73,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: 227932925
+  m_SortingLayer: 3
+  m_SortingOrder: 20
   m_Sprite: {fileID: 21300000, guid: 10defe2931668d740999c6f4e6764c90, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -117,14 +119,14 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 2.5
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!58 &1961104423746621635
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -141,3 +143,34 @@ CircleCollider2D:
   m_Offset: {x: 0.01, y: -0.19}
   serializedVersion: 2
   m_Radius: 0.14
+--- !u!114 &4623980486760641863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961104423746621639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba73cb9c0d2cf6f40a579516a23d90a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delayExposion: 3
+  effectExplosion: {fileID: 6442004314846440236, guid: 83420aa747f609349b769f6ccbef1c86, type: 3}
+--- !u!114 &224860550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961104423746621639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dbfd798fb119074c8a50d80359fc733, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pfBar: {fileID: 3486750623046245679, guid: 5bb85166cd2b8614993fde45d81a6a94, type: 3}
+  bar: {fileID: 0}
+  offsetY: 0.25
+  guage: {fileID: 0}
+  goSource: {fileID: 0}
