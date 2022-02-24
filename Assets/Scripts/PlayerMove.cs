@@ -16,6 +16,7 @@ public class PlayerMove : MonoBehaviour
     public Rigidbody2D mRigidbody;
     // jump
     public int forceJump = 150;
+    public int countJump;
     // ground
     public bool isGround;
     // falling
@@ -62,6 +63,7 @@ public class PlayerMove : MonoBehaviour
         mRigidbody = GetComponent<Rigidbody2D>();
         buttonJump = FindObjectOfType<ButtonJump>();
         playerLife = FindObjectOfType<PlayerLife>();
+        
         Init();
     }
 
@@ -75,6 +77,7 @@ public class PlayerMove : MonoBehaviour
         isFalling = true;
         timeParticles = 0f;
         isJoystickdown = false;
+        countJump = 0;
     }
 
     // Update is called once per frame
@@ -148,10 +151,13 @@ public class PlayerMove : MonoBehaviour
         }
         else
         {
-            if (isGround)
+            if (countJump == 0)
             {
                 if (Input.GetKeyDown(KeyCode.Space) || buttonJump.isTouchDown)
                 {
+                    // countJump ++;
+                    countJump++;
+
                     // button jump
                     buttonJump.isTouchDown = false;
 
@@ -362,6 +368,7 @@ public class PlayerMove : MonoBehaviour
                 SoundManager.instance.PlaySound(SoundManager.instance.audioThud, transform.position, SoundManager.instance.volumeThud);
 
                 isGround = true;
+                countJump = 0;
 
                 // particles
                 timeParticles = 0f;
@@ -369,7 +376,7 @@ public class PlayerMove : MonoBehaviour
             }
         }
     }
-
+   
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.layer != LayerMask.NameToLayer("Wall"))

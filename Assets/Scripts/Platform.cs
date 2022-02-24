@@ -24,6 +24,7 @@ public class Platform : MonoBehaviour
     {
         // The play is on ground
         player.isGround = true;
+        player.countJump = 0;
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -31,5 +32,7 @@ public class Platform : MonoBehaviour
         // The player leaves on the platform
         platform.isTrigger = true;
         player.isGround = false;
+        // 플랫폼에서 점프시 두번 점프 가능한 것을 막기 위해
+        if (player.mRigidbody.velocity.y > 0f) player.countJump++;
     }
 }
