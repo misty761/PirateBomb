@@ -361,19 +361,15 @@ public class PlayerMove : MonoBehaviour
     {
         if (collision.gameObject.layer != LayerMask.NameToLayer("Wall"))
         {
-            // player가 위에서 충돌
-            if (collision.contacts[0].point.normalized.y < 0f)
-            {
-                // sound
-                SoundManager.instance.PlaySound(SoundManager.instance.audioThud, transform.position, SoundManager.instance.volumeThud);
+            // sound
+            SoundManager.instance.PlaySound(SoundManager.instance.audioThud, transform.position, SoundManager.instance.volumeThud);
 
-                isGround = true;
-                countJump = 0;
+            isGround = true;
+            countJump = 0;
 
-                // particles
-                timeParticles = 0f;
-                MakeParticles(pfParticlesFall, 0f, offsetParticlesFallY);
-            }
+            // particles
+            timeParticles = 0f;
+            MakeParticles(pfParticlesFall, 0f, offsetParticlesFallY);
         }
     }
    
