@@ -157,17 +157,15 @@ public class PlayerMove : MonoBehaviour
                 {
                     // countJump ++;
                     countJump++;
-
                     // button jump
                     buttonJump.isTouchDown = false;
-
                     // sound
                     SoundManager.instance.PlaySound(audioJump, transform.position, 1f);
-
                     // particles
                     timeParticles = 0f;
                     MakeParticles(pfParticlesJump, 0f, offsetParticlesJumpY);
-
+                    // velocity y sets to 0
+                    mRigidbody.velocity = new Vector2(mRigidbody.velocity.x, 0);
                     // jump
                     mRigidbody.AddForce(new Vector2(0, forceJump));
                     isGround = false;
@@ -193,7 +191,7 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        // input(A & D ���� �Է½�)
+        // input(A & D 동시 입력)
         if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
         {
             isIdle = true;
@@ -249,21 +247,11 @@ public class PlayerMove : MonoBehaviour
         }    
     }
 
-    /*
-    public void ReturnMethod()
-    {
-        if (life <= 0
-            || animator.GetCurrentAnimatorStateInfo(0).IsName("DoorOut")
-            || animator.GetCurrentAnimatorStateInfo(0).IsName("DoorIn")
-            || GameManager.instance.state != GameManager.State.Play) return;
-    }
-    */
-
     void MakeParticles(GameObject particles, float offsetX, float offsetY)
     {
         Vector2 pos = new Vector2(transform.transform.position.x + offsetX, transform.position.y + offsetY);
 
-        // sprite(ĳ���� ���⿡���� ��������Ʈ ȸ��)
+        // sprite(바라보는 방향에 따라 스프라이트 회전)
         if (isLookingRight)
         {
             particles.transform.localScale = new Vector2(1, 1);
@@ -272,7 +260,6 @@ public class PlayerMove : MonoBehaviour
         {
             particles.transform.localScale = new Vector2(-1, 1);
         }
-
         // particles
         if (timeParticles == 0f && isGround)
         {

@@ -43,7 +43,6 @@ public class GoogleMobileAdsReward : MonoBehaviour
 
 #if UNITY_ANDROID
         adUnitId = "ca-app-pub-3940256099942544/5224354917";  // test ID
-        // ca-app-pub-3940256099942544~3347511713 // test app ID
 #elif UNITY_IPHONE
         adUnitId = "ca-app-pub-3940256099942544/1712485313";
 #else
